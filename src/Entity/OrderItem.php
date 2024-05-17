@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\OrderItemRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: OrderItemRepository::class)]
+class OrderItem
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Order $order = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Product $product = null;
+
+    #[ORM\Column]
+    private ?float $unite_price = null;
+
+    #[ORM\Column]
+    private ?int $quantity = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?Order $_order): static
+    {
+        $this->order = $_order;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): static
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getUnitePrice(): ?float
+    {
+        return $this->unite_price;
+    }
+
+    public function setUnitePrice(float $unite_price): static
+    {
+        $this->unite_price = $unite_price;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): static
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+}

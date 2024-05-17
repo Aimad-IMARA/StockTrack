@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand ms-lg-4 ms-sm-2" href="{{ path('home') }}">
+            <img width="75px" src="{{ asset('photos/logo/logo.png') }}" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% for model in getModels() %}
+                <li class="nav-item">
+                    <a class="nav-link {{ app.current_route == model.path? 'active underline' }}" aria-current="page" href="{{ path(model.path) }}">{{ model.name }}</a>
+                </li>
+                {% endfor %}
+                <li class="nav-item">
+                    {% if app.user is null %}
+                        <a class="nav-link {{ app.current_route == 'login'? 'active' }}" href="{{ path('login') }}">
+                            <i class="bi bi-box-arrow-in-right h5"></i>
+                            Sign In
+                        </a>
+                    {% else %}
+                        <a class="nav-link" href="{{ path('logout') }}">
+                            <i class="bi bi-box-arrow-left h5"></i>
+                            Sign Out
+                        </a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

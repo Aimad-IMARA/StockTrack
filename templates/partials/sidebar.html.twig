@@ -1,0 +1,19 @@
+    <aside class="d-flex flex-column w-25 p-3 bg-dark text-light" style="min-height: 100vh;max-width: 250px">
+        <a href="{{ path('admin.dashboard') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-light text-decoration-none">
+            <span class="fs-4 ms-2">ADMIN</span>
+        </a>
+        <hr class="text-white">
+        <ul class="nav nav-pills flex-column">
+            {% for model in getModels(app.user) %}
+                {% if 'ROLE_ADMIN' in model.roles %}
+                    <li class="nav-item">
+                        <a href="{% if model.path != '#' %} {{ path(model.path) }} {% else %} # {% endif %}" class="nav-link link-light {{ app.current_route == model.path ? 'active bg-light bg-opacity-50 text-dark' }}">
+                            {{ model.name }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <hr class="text-white">
+    </aside>
+

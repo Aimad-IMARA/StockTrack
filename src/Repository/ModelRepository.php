@@ -16,6 +16,23 @@ class ModelRepository extends ServiceEntityRepository
         parent::__construct($registry, Model::class);
     }
 
+    public function findByRoleUser()
+    {
+        return $this->createQueryBuilder('m')
+            ->where('NOT m.roles LIKE :adminRole')
+            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->orderBy('m.modelOrder', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findByRoleAdmin()
+    {
+        return $this->createQueryBuilder('m')
+            ->orderBy('m.modelOrder', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Model[] Returns an array of Model objects
     //     */

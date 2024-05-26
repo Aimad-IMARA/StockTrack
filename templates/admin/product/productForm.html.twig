@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - {{ is_edit ? 'Product' : 'New Product' }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <h2 class="mb-4 text-center border-bottom border-dark">{{ is_edit ? 'Edit Product' : 'Add Product' }}</h2>
+                <div class="card shadow-sm p-4">
+                    {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.image, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.image) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.price) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.category, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.category) }}
+                        {{ form_errors(form.category) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.stock, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.stock) }}
+                        {{ form_errors(form.stock) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.featured, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.featured) }}
+                        {{ form_errors(form.featured) }}
+                    </div>
+                    <div class="text-center">
+                        {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success w-50'}}) }}
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

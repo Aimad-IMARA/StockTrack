@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
@@ -10,11 +10,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'home')]
-    public function index(CategoryRepository $categoryRepository,ProductRepository $productRepository): Response
+    #[Route('user/home', name: 'home')]
+    public function index(CategoryRepository $categoryRepository, ProductRepository $productRepository): Response
     {
+        $products = $productRepository->findFeatured();
 
-        $products = $productRepository->findAll();
         $categories = $categoryRepository->findAll();
         return $this->render('home/index.html.twig', [
             'categories' => $categories,

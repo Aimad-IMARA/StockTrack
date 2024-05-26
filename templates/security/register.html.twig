@@ -1,18 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}{{ parent() }}Sign up{% endblock %}
 
 {% block body %}
-    <div class="d-flex flex-column align-items-center container-fluid">
-        <div class="col-8 col-xl-4 col-lg-4 p-3 border rounded">
-            <h1 class="h3 mb-3 font-weight-normal text-center">Registration !</h1>
-            {{ form_errors(registrationForm, {'attr': {'class': 'w-100'}}) }}
+    <div class="d-flex mt-5 flex-column align-items-center container-fluid">
+        <div class="col-8 col-lg-4 col-xl-4 p-3 border rounded bg-white pb-5 pt-4 shadow px-5">
+            <h1 class="h1 mb-4  font-weight-bold text-center">Sign up</h1>
+            {{ form_errors(registrationForm, {'attr': {'class': 'w-75 mx-auto'}}) }}
 
             {{ form_start(registrationForm) }}
             <div class="mb-3">
-                <label for="inputEmail" class="form-label">Email</label>
-                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'johndoe@gmail.com'}}) }}
+                <label for="email" class="form-label">Email</label>
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'johndoe@gmail.com', 'id':'email'}}) }}
                 {{ form_errors(registrationForm.email, {'attr': {'class': 'alert alert-danger'}}) }}
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'johndoe@gmail.com', 'id':'email'}}) }}
+                {{ form_errors(registrationForm.username, {'attr': {'class': 'alert alert-danger'}}) }}
             </div>
             <div class="mb-3">
                 <label for="inputPassword" class="form-label">Password</label>
@@ -24,7 +29,7 @@
                 {{ form_errors(registrationForm.agreeTerms, {'attr': {'class': 'alert alert-danger'}}) }}
             </div>
 
-            <button type="submit" class="btn btn-dark btn-block">Register</button>
+            <button type="submit" class="btn btn-dark btn-block mt-4">Register</button>
             {{ form_end(registrationForm) }}
         </div>
 

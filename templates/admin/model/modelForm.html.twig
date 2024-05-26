@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - {{ is_edit ? 'Model' : 'New Model' }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <h2 class="mb-4 text-center">{{ is_edit ? 'Edit Model' : 'Add Model' }}</h2>
+                <div class="card shadow-sm p-4">
+                    {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.path, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.path, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.path) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.modelOrder, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.modelOrder, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.modelOrder) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.roles, null, {'label_attr': {'class': 'form-label font-weight-5'}}) }}
+                        {{ form_widget(form.roles) }}
+                        {{ form_errors(form.roles) }}
+                    </div>
+                    <div class="text-center">
+                        {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success w-50'}}) }}
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

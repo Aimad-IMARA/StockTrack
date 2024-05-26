@@ -2,15 +2,15 @@
 
 namespace App\Twig\Extension;
 
+use App\Entity\User;
 use App\Repository\ModelRepository;
-use App\Twig\Runtime\ModelExtenstionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class ModelExtension extends AbstractExtension
 {
-    private $modelRepository;
+    private ModelRepository $modelRepository;
 
     public function __construct(ModelRepository $modelRepository)
     {
@@ -33,8 +33,14 @@ class ModelExtension extends AbstractExtension
         ];
     }
 
-    public function getModels(): array
+    public function getModels(?User $user): array
     {
-        return $this->modelRepository->findAll();
+        if($user instanceof User) {
+            if(in_array('ROLE_ADMIN', $user->getRoles())) {
+                return $this->modelRepository->findByRoleAdmin();
+            }
+            return $this->modelRepository->findByRoleUser();
+        }
+        return [];
     }
 }

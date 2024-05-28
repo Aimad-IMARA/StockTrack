@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\ModelType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\GetDataService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,6 +21,10 @@ use function PHPUnit\Framework\isNan;
 
 class UserController extends AbstractController
 {
+    public function __construct(GetDataService $getDataService)
+    {
+        $this->getDataService = $getDataService;
+    }
     #[Route('user/profile', name: 'user.profile', methods: ['GET'])]
     public function profile(): Response
     {
@@ -36,33 +41,8 @@ class UserController extends AbstractController
     #[Route('admin/user/data', name: 'admin.user.data', methods: ['GET'])]
     public function getData(UserRepository $userRepository, Request $request): Response
     {
-        $draw = intval($request->get('draw'));
-        $start = intval($request->get('start'));
-        $length = intval($request->get('length'));
-        $search = $request->get('search')['value'];
-
-        $orderColumnIndex = intval($request->get('order')[0]['column']);
-        $orderDirection = $request->get('order')[0]['dir'];
-        $columns = $request->get('columns');
-
-        $orderColumn = $columns[$orderColumnIndex]['data'];
-        $query = $userRepository->createQueryBuilder('u')
-            ->setFirstResult($start)
-            ->setMaxResults($length);
-
-        if ($orderColumn != 'action') {
-            $query->orderBy('u.' . $orderColumn, $orderDirection);
-        }
-
-        if (!empty($search)) {
-            $query->where('u.email LIKE :search or u.username LIKE :search or u.roles LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $results = $query->getQuery()->getResult();
-        $totalRecords = $userRepository->count([]);
-        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
-
+        $searchableFields = ['id', 'username', 'email', 'roles'];
+        $results = $this->getDataService->getData($userRepository, $request, $searchableFields);
         $data = [];
 
         foreach ($results as $result) {
@@ -84,6 +64,9 @@ class UserController extends AbstractController
                 'action' => $actionHtml,
             ];
         }
+        $draw = intval($request->get('draw'));
+        $totalRecords = $userRepository->count([]);
+        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
 
         return new JsonResponse([
             'draw' => $draw,

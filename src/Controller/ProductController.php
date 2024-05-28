@@ -8,6 +8,7 @@ use App\Form\ModelType;
 use App\Form\ProductType;
 use App\Repository\ModelRepository;
 use App\Repository\ProductRepository;
+use App\Service\GetDataService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProductController extends AbstractController
 {
+    public function __construct(GetDataService $getDataService)
+    {
+        $this->getDataService = $getDataService;
+    }
+
     #[Route('user/product', name: 'user.product.index')]
     public function index(ProductRepository $productRepository): Response
     {
@@ -43,34 +49,10 @@ class ProductController extends AbstractController
     #[Route('admin/product/data', name: 'admin.product.data')]
     public function getData(ProductRepository $productRepository, Request $request): Response
     {
-        $draw = intval($request->get('draw'));
-        $start = intval($request->get('start'));
-        $length = intval($request->get('length'));
-        $search = $request->get('search')['value'];
-
-        $orderColumnIndex = intval($request->get('order')[0]['column']);
-        $orderDirection = $request->get('order')[0]['dir'];
-        $columns = $request->get('columns');
-        $orderColumn = $columns[$orderColumnIndex]['data'];
-
-        $query = $productRepository->createQueryBuilder('p')
-            ->setFirstResult($start)
-            ->setMaxResults($length);
-
-        if (!in_array($orderColumn, ['image', 'action'])) {
-            $query->orderBy('p.' . $orderColumn, $orderDirection);
-        }
-
-        if (!empty($search)) {
-            $query->where('p.name LIKE :search or p.description LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $results = $query->getQuery()->getResult();
-        $totalRecords = $productRepository->count([]);
-        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
-
+        $searchableFields = ['name', 'description'];
+        $results = $this->getDataService->getData($productRepository, $request, $searchableFields);
         $data = [];
+
         foreach ($results as $result) {
             $deleteHtml = $this->render('partials/deleteButton.html.twig', [
                 'model' => 'product',
@@ -95,6 +77,9 @@ class ProductController extends AbstractController
                 'action' => $actionHtml,
             ];
         }
+        $draw = intval($request->get('draw'));
+        $totalRecords = $productRepository->count([]);
+        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
 
         return new JsonResponse([
             'draw' => $draw,

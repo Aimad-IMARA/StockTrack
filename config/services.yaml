@@ -6,6 +6,11 @@
 parameters:
     images_dir: '%kernel.project_dir%/public/images'
 services:
+    App\Twig\Extension\CategoryExtension:
+        arguments:
+            $categoryRepository: '@App\Repository\CategoryRepository'
+        tags:
+            - { name: twig.extension }
     App\Twig\Extension\ModelExtension:
         arguments:
             $modelRepository: '@App\Repository\ModelRepository'

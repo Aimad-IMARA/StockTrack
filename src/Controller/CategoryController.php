@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use AllowDynamicProperties;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use App\Service\GetDataService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +22,11 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class CategoryController extends AbstractController
 {
+    public function __construct(GetDataService $getDataService)
+    {
+        $this->getDataService = $getDataService;
+    }
+
     #[Route('user/category', name: 'user.category.index')]
     public function index(CategoryRepository $categoryRepository): Response
     {
@@ -29,37 +37,27 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    #[Route('user/category/products/{id}', name: 'user.category.products', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
+    public function categoryProducts(Category $category, ProductRepository $productRepository ,Request $request, PaginatorInterface $paginator): Response
+    {
+        $featuredProducts = $productRepository->findFeatured();
+        $products = $paginator->paginate(
+            $category->getProducts(),
+            $request->query->getInt('page', 1),
+            8
+        );
+        return $this->render('category/products.html.twig', [
+            'category' => $category,
+            'products' => $products,
+            'featuredProducts' => $featuredProducts,
+        ]);
+    }
+
     #[Route('admin/category/get',name: 'admin.category.data')]
     public function getData(CategoryRepository $categoryRepository, Request $request): JsonResponse
     {
-        $draw = intval($request->get('draw'));
-        $start = intval($request->get('start'));
-        $length = intval($request->get('length'));
-        $search = $request->get('search')['value'];
-
-        $orderColumnIndex = intval($request->get('order')[0]['column']);
-        $orderDirection = $request->get('order')[0]['dir'];
-        $columns = $request->get('columns');
-
-        $orderColumn = $columns[$orderColumnIndex]['data'];
-        $query = $categoryRepository->createQueryBuilder('c')
-            ->setFirstResult($start)
-            ->setMaxResults($length);
-
-        if (!in_array($orderColumn, ['image', 'action'])) {
-            $query->orderBy('c.' . $orderColumn, $orderDirection);
-        }
-
-
-        if (!empty($search)) {
-            $query->where('c.name LIKE :search or c.description LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $results = $query->getQuery()->getResult();
-        $totalRecords = $categoryRepository->count([]);
-        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
-
+        $searchableFields = ['name', 'description'];
+        $results = $this->getDataService->getData($categoryRepository, $request, $searchableFields);
         $data = [];
 
         foreach ($results as $result) {
@@ -85,6 +83,11 @@ class CategoryController extends AbstractController
             ];
         }
 
+        $draw = intval($request->get('draw'));
+        $totalRecords = $categoryRepository->count([]);
+        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
+
+
         return new JsonResponse([
             'draw' => $draw,
             'recordsTotal' => $totalRecords,
@@ -102,8 +105,6 @@ class CategoryController extends AbstractController
     #[Route('user/category/{id}', name: 'user.category.show', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     public function show(CategoryRepository $categoryRepository, Category $category): Response
     {
-        $category = $categoryRepository->find($category->getId());
-
         return $this->render('category/show.html.twig', [
             'category' => $category,
         ]);

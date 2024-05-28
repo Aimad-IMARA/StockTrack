@@ -18,6 +18,10 @@ use Symfony\Component\Routing\Requirement\Requirement;
 
 class ModelController extends AbstractController
 {
+    public function __construct(GetDataService $getDataService)
+    {
+        $this->getDataService = $getDataService;
+    }
     #[Route('admin/model', name: 'admin.model.index', methods: ['GET'])]
     public function adminIndex(): Response
     {
@@ -28,32 +32,10 @@ class ModelController extends AbstractController
     #[Route('admin/model/data', name: 'admin.model.data')]
     public function getData(ModelRepository $modelRepository, Request $request): Response
     {
-        $draw = intval($request->get('draw'));
-        $start = intval($request->get('start'));
-        $length = intval($request->get('length'));
-        $search = $request->get('search')['value'];
-        $orderColumnIndex = intval($request->get('order')[0]['column']);
-        $orderDirection = $request->get('order')[0]['dir'];
-        $columns = $request->get('columns');
-        $orderColumn = $columns[$orderColumnIndex]['data'];
-
-        $query = $modelRepository->createQueryBuilder('m')
-            ->setFirstResult($start)
-            ->setMaxResults($length);
-
-        if ($orderColumn != 'action') {
-            $query->orderBy('m.' . $orderColumn, $orderDirection);
-        }
-        if (!empty($search)) {
-            $query->where('m.name LIKE :search or m.path LIKE :search or m.modelOrder LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
-        }
-
-        $results = $query->getQuery()->getResult();
-        $totalRecords = $modelRepository->count([]);
-        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
-
+        $searchableFields = ['name', 'path', 'modelOrder'];
+        $results = $this->getDataService->getData($modelRepository, $request, $searchableFields);
         $data = [];
+
         foreach ($results as $result) {
             $deleteHtml = $this->render('partials/deleteButton.html.twig', [
                 'model' => 'model',
@@ -73,6 +55,10 @@ class ModelController extends AbstractController
                 'action' => $actionHtml,
             ];
         }
+
+        $draw = intval($request->get('draw'));
+        $totalRecords = $modelRepository->count([]);
+        $totalRecordsFiltered = !empty($search) ? count($results) : $totalRecords;
 
         return new JsonResponse([
             'draw' => $draw,

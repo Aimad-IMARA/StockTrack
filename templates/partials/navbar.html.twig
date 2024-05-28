@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-light ">
     <div class="container-fluid">
-        <a class="navbar-brand ms-lg-4 ms-sm-2" href="{{ path('home') }}">
+        <a class="navbar-brand ms-lg-4 ms-sm-2" href="{{ path('user.home') }}">
             <img width="75px" src="{{ asset('images/logo/logo.png') }}" alt="">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -9,44 +9,48 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 {% for model in getModels(app.user) %}
-                    {% if 'ROLE_ADMIN' not in model.roles %}
-                        <li class="nav-item">
-                            <a class="nav-link {{ app.current_route == model.path? 'active underline' }}" aria-current="page" href="{{ path(model.path) }}">{{ model.name }}</a>
-                        </li>
+                    {% if 'ROLE_ADMIN' not in model.roles and 'ROLE_ADMIN' not in app.user.roles %}
+                        {% if model.name == 'Categories' %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ app.current_route starts with 'user.category' ? 'active underline' }}" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ model.name }}
+                                </a>
+                                <ul class="dropdown-menu p-0" aria-labelledby="categoriesDropdown">
+                                    {% for category in getCategories() %}
+                                        <li>
+                                            <a class="dropdown-item m-0 py-2 btn-outline-dark {{ app.current_route == 'user.category.products' ? app.current_route_parameters.id == category.id ? 'active' }}" href="{{ path('user.category.products', {'id':category.id}) }}">{{ category.name }}</a>
+                                        </li>
+                                        {% if not loop.last %}
+                                            <li><hr class="dropdown-divider m-0"></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.current_route == model.path ? 'active underline' }}" aria-current="page" href="{{ path(model.path) }}">{{ model.name }}</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
                 {% if app.user %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle h5"></i>
+                            <i class="bi bi-person-fill"></i>
+                            <span>{{ app.user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-grow-1 d-flex gap-1">
-                                            <div class="d-block h-100 align-content-center">
-                                                <i class="bi bi-person-vcard-fill fs-6"></i>
-                                            </div>
-                                            <div class="w-75 d-flex flex-column">
-                                                Welcome {{ app.user.username }}!
-                                            </div>
-
-                                        </div>
-                                    </div>
+                                <a class="dropdown-item btn-dark" href="#">
+                                    <i class="bi bi-person-gear"></i>
+                                    <span class="align-middle">My Profile</span>
                                 </a>
                             </li>
                             <li>
                                 <div class="dropdown-divider"></div>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-person-gear"></i>
-                                    <span class="align-middle">My Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{{ path('logout') }}">
+                                <a class="dropdown-item btn-dark text-danger" href="{{ path('logout') }}">
                                     <i class="bi bi-power"></i>
                                     <span class="align-middle">Log Out</span>
                                 </a>

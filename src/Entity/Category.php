@@ -50,6 +50,16 @@ class Category
         return $this;
     }
 
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function setProducts(Collection $products): void
+    {
+        $this->products = $products;
+    }
+
     public function getImage(): ?string
     {
         return $this->image;

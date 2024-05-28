@@ -1,0 +1,47 @@
+<style>
+    .pagination .page-link {
+        background-color: #ffffff; /* Dark background color */
+        color: black; /* White text color */
+        border: 1px solid #343a40; /* Border to match background */
+    }
+
+    .pagination .page-link:hover {
+        background-color: #23272b; /* Slightly darker background on hover */
+        color: #ffffff; /* Ensure text color remains white */
+        border-color: #23272b; /* Match border with background on hover */
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #23272b; /* Darker background for active page */
+        border-color: #23272b; /* Match border with background for active page */
+        color: #ffffff; /* Ensure text color remains white */
+    }
+
+    .pagination .page-link.disabled {
+        background-color: #343a40; /* Maintain dark background for disabled link */
+        color: #6c757d; /* Use Bootstrap's muted text color for disabled state */
+        pointer-events: none; /* Ensure the link is not clickable */
+        border-color: #343a40; /* Match border with background for disabled link */
+    }
+</style>
+
+<nav  aria-label="Page navigation example">
+    <ul class="pagination justify-content-center py-4">
+        {% if previous is defined %}
+            <li  class="page-item ">
+                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):previous})) }}#back">Previous</a>
+            </li>
+        {% endif %}
+        {% for page in pagesInRange %}
+            <li class="page-item {% if page == app.request.get(pageParameterName) or (app.request.get(pageParameterName) is null and page == 1) %} active {% endif %}">
+                <a href="{{ path(route, query|merge({(pageParameterName):page})) }}#back" class="page-link py-2 px-3{% if page == app.request.get(pageParameterName) or (app.request.get(pageParameterName) is null and page == 1) %} active-link {% endif %}">{{ page }}</a>
+            </li>
+        {% endfor %}
+        {% if next is defined %}
+            <li class="page-item ">
+                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):next})) }}#back" tabindex="+1">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+

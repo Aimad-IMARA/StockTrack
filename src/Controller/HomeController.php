@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('user/home', name: 'home')]
+    #[Route('user/home', name: 'user.home')]
     public function index(CategoryRepository $categoryRepository, ProductRepository $productRepository): Response
     {
         $products = $productRepository->findFeatured();

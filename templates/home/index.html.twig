@@ -77,17 +77,20 @@
                                     <div class="card shadow py-3 h-100 d-flex flex-column">
                                         <div class="d-flex justify-content-between align-items-center" style="height: 200px;">
                                             <img src="{{ asset('images/products/' ~ product.image) }}" class="card-img-top img-fluid" alt="{{ product.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                            {% if product.featured %}
+                                                <span class="badge py-2 badge-warning position-absolute" style="top: 10px; left: 10px;"><i class="bi bi-star-fill">featured</i> </span>
+                                            {% endif %}
                                         </div>
                                         <div class="card-body d-flex flex-column justify-content-between">
                                             <div class="mb-3">
                                                 <h5 class="card-title d-flex justify-content-between align-content-center">
-                                                    <a>{{ product.name }}</a>
+                                                    <a href="{{ path('user.product.show',{'id':product.id}) }}">{{ product.name }}</a>
                                                     <span class="small text-secondary">{{ product.price | number_format(0, '.', ',') }} MAD</span>
                                                 </h5>
                                             </div>
                                             <div class="d-flex  {% if product.stock > 0 %} justify-content-between {% else %} justify-content-center {% endif%} align-items-center">
                                                 {% if product.stock > 0 %}
-                                                    <a href="#" class="btn btn-outline-dark me-2">Add to Cart <i class="bi bi-cart-plus"></i></a>
+                                                    {% include 'partials/addToCartButton.html.twig' with {'id':product.id} %}
                                                     <span class="text-success">{{ product.stock }} IN STOCK!</span>
                                                 {% else %}
                                                     <span class="text-danger">SOLD OUT!</span>

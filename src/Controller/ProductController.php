@@ -38,11 +38,10 @@ class ProductController extends AbstractController
         ]);
     }
     #[Route('user/product/{id}', name: 'user.product.show', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(ProductRepository $productRepository, Product $product): Response
+    public function show(Product $product): Response
     {
-        $product = $productRepository->find($product->getId());
         return $this->render('product/show.html.twig', [
-            'product' => $product,
+            'product' => $product
         ]);
     }
 
@@ -63,7 +62,7 @@ class ProductController extends AbstractController
                 'model' => 'product',
                 'id' => $result->getId(),
             ])->getContent();
-            $image = $this->render('partials/image.html.twig',[
+            $image = $this->render('partials/image.html.twig', [
                 'imgSrc' => 'images/products/'.$result->getImage(),
                 'imgAlt' => $result->getImage(),
             ])->getContent();
@@ -119,7 +118,7 @@ class ProductController extends AbstractController
 
                 }
                 $product->setImage($newFileName);
-            }else{
+            } else {
                 $product->setImage('no-image-yet');
             }
             $em->persist($product);

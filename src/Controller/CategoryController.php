@@ -37,8 +37,8 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('user/category/products/{id}', name: 'user.category.products', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function categoryProducts(Category $category, ProductRepository $productRepository ,Request $request, PaginatorInterface $paginator): Response
+    #[Route('user/category/{id}/products', name: 'user.category.products', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
+    public function categoryProducts(Category $category, ProductRepository $productRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $featuredProducts = $productRepository->findFeatured();
         $products = $paginator->paginate(
@@ -53,7 +53,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('admin/category/get',name: 'admin.category.data')]
+    #[Route('admin/category/get', name: 'admin.category.data')]
     public function getData(CategoryRepository $categoryRepository, Request $request): JsonResponse
     {
         $searchableFields = ['name', 'description'];
@@ -70,7 +70,7 @@ class CategoryController extends AbstractController
                 'model' => 'category',
                 'id' => $result->getId(),
             ])->getContent();
-            $image = $this->render('partials/image.html.twig',[
+            $image = $this->render('partials/image.html.twig', [
                 'imgSrc' => 'images/categories/'.$result->getImage(),
                 'imgAlt' => $result->getImage(),
             ])->getContent();
@@ -145,7 +145,7 @@ class CategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $image = $form->get('image')->getData();
-            if($image){
+            if($image) {
                 $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeName = $slugger->slug($originalName);
                 $newFileName = $safeName . '-' . uniqid() . '.' . $image->guessExtension();
@@ -158,7 +158,7 @@ class CategoryController extends AbstractController
 
                 }
                 $category->setImage($newFileName);
-            }else{
+            } else {
                 $category->setImage('no-image-yet');
             }
 

@@ -1,10 +1,101 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ parent() }} {{ product.name }}{% endblock %}
+
 {% block body %}
-
+    <div class="container my-5">
+        <div class="card shadow-sm mx-auto h-100" style="max-width: 800px;">
+            <div class="row     ">
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="position-relative w-100">
+                        <img src="{{ asset('images/products/'~product.image) }}" class="img-fluid w-100" style="max-height: 100%; height: auto;" alt="{{ product.name }}">
+                    </div>
+                    {% if product.featured %}
+                        <span class="badge py-2 badge-warning position-absolute" style="top: 10px; left: 10px;"><i class="bi bi-star-fill">featured</i> </span>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body p-3">
+                        <h5 class="card-title display-6 font-weight-bold">{{ product.name }}</h5>
+                        <hr class="">
+                        <p class="card-text mt-4">
+                            <span class="text-secondary text-decoration-underline">{{ product.price | number_format(2, '.', ',') }} MAD</span>
+                        </p>
+                        <p class="card-text">
+                            {% if product.stock > 0 %}
+                                <small class="text-success">{{ product.stock }} in stock</small>
+                            {% else %}
+                                <small class="text-danger">sold out!</small>
+                            {% endif %}
+                        </p>
+                        <p class="card-text fs-4">{{ product.description }}</p>
+                        {% if product.stock>0 %}
+                            <a href="{{ path('user.cart.add', {'id': product.id}) }}" class="btn btn-dark btn-block mt-3 ">
+                                Add to cart <i class="bi bi-cart-plus-fill"></i>
+                            </a>
+                        {% endif %}
+                        <ul class="list-unstyled mt-3">
+                            <li><strong>Category:</strong> <a href="{{ path('user.category.products', {'id': product.category.id}) }}">{{ product.category.name }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if product.category.products.count > 1 %}
+            <hr>
+            <h3 class="text-center display-6 mb-3 font-weight-bold mt-5">Other {{ product.category.name }} products</h3>
+            <div id="ProductCarousel" class="carousel slide gap-3 align-content-center d-flex justify-content-between align-content-center" data-ride="carousel">
+                <div class="d-flex align-items-center justify-content-center">
+                    <a class="" href="#ProductCarousel" role="button" data-slide="prev">
+                        <span  aria-hidden="true"><i class="bi bi-arrow-left-circle btn btn-dark"></i></span>
+                    </a>
+                    <div class="h-100"></div>
+                </div>
+                <div class="carousel-inner">
+                    {% for batch in product.category.products|batch(3) %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <div class="row d-flex justify-content-center">
+                                {% for item in batch %}
+                                    {% if item != product %}
+                                        <div class="col-md-4" style="min-height: 50vh;">
+                                            <div class="card shadow py-3 h-100 d-flex flex-column">
+                                                <div class="d-flex justify-content-between align-items-center" style="height: 200px;">
+                                                    <img src="{{ asset('images/products/' ~ item.image) }}" class="card-img-top img-fluid" alt="{{ item.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                    {% if item.featured %}
+                                                        <span class="badge py-2 badge-warning position-absolute" style="top: 10px; left: 10px;"><i class="bi bi-star-fill">featured</i> </span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="card-body d-flex flex-column justify-content-between">
+                                                    <div class="mb-3">
+                                                        <h5 class="card-title d-flex justify-content-between align-content-center">
+                                                            <a href="{{ path('user.product.show',{'id':item.id}) }}">{{ item.name }}</a>
+                                                            <span class="small text-secondary">{{ item.price | number_format(0, '.', ',') }} MAD</span>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="d-flex  {% if item.stock > 0 %} justify-content-between {% else %} justify-content-center {% endif%} align-items-center">
+                                                        {% if item.stock > 0 %}
+                                                            {% include 'partials/addToCartButton.html.twig' with {'id':item.id} %}
+                                                            <span class="text-success">{{ item.stock }} IN STOCK!</span>
+                                                        {% else %}
+                                                            <span class="text-danger">SOLD OUT!</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                    <a class="" href="#ProductCarousel" role="button" data-slide="next">
+                        <span aria-hidden="true"><i class="bi bi-arrow-right-circle btn btn-dark"></i></span>
+                    </a>
+                    <div class="h-100"></div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
-
-{% block title %}
-
-{% endblock %}
-

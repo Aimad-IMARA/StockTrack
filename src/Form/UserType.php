@@ -6,7 +6,6 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +20,7 @@ class UserType extends AbstractType
         $builder
             ->add('email', EmailType::class, ['disabled' => $options['is_edit']])
             ->add('username', null, ['disabled' => $options['is_edit']])
-            ->add('password',PasswordType::class, ['disabled' => $options['is_edit']])
+            ->add('password', PasswordType::class, ['disabled' => $options['is_edit']])
             ->add('roles', ChoiceType::class, [
                 'choices' => [
                     'Admin' => 'ROLE_ADMIN',

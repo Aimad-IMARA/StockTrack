@@ -29,17 +29,17 @@
     <ul class="pagination justify-content-center py-4">
         {% if previous is defined %}
             <li  class="page-item ">
-                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):previous})) }}#back">Previous</a>
+                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):previous})) }}#products">Previous</a>
             </li>
         {% endif %}
         {% for page in pagesInRange %}
             <li class="page-item {% if page == app.request.get(pageParameterName) or (app.request.get(pageParameterName) is null and page == 1) %} active {% endif %}">
-                <a href="{{ path(route, query|merge({(pageParameterName):page})) }}#back" class="page-link py-2 px-3{% if page == app.request.get(pageParameterName) or (app.request.get(pageParameterName) is null and page == 1) %} active-link {% endif %}">{{ page }}</a>
+                <a href="{{ path(route, query|merge({(pageParameterName):page})) }}#products" class="page-link py-2 px-3{% if page == app.request.get(pageParameterName) or (app.request.get(pageParameterName) is null and page == 1) %} active-link {% endif %}">{{ page }}</a>
             </li>
         {% endfor %}
         {% if next is defined %}
             <li class="page-item ">
-                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):next})) }}#back" tabindex="+1">Next</a>
+                <a class="page-link py-2 px-3" href="{{ path(route, query|merge({(pageParameterName):next})) }}#products" tabindex="+1">Next</a>
             </li>
         {% endif %}
     </ul>

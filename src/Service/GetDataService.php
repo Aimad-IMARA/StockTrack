@@ -30,7 +30,7 @@ class GetDataService
             ->setFirstResult($start)
             ->setMaxResults($length);
 
-        if (!in_array($orderColumn,['action','image'])) {
+        if (!in_array($orderColumn, ['action','image'])) {
             $query->orderBy('e.' . $orderColumn, $orderDirection);
         }
 

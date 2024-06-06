@@ -40,8 +40,8 @@ class Product
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $stock = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false ,onDelete: 'CASCADE')]
     #[Assert\NotBlank]
     private ?Category $category = null;
 

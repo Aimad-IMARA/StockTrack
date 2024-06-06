@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use AllowDynamicProperties;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
@@ -100,14 +99,6 @@ class CategoryController extends AbstractController
     public function adminIndex(): Response
     {
         return $this->render('admin/category/index.html.twig', []);
-    }
-
-    #[Route('user/category/{id}', name: 'user.category.show', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    public function show(CategoryRepository $categoryRepository, Category $category): Response
-    {
-        return $this->render('category/show.html.twig', [
-            'category' => $category,
-        ]);
     }
 
     #[Route('admin/category/delete/{id}', name: 'admin.category.delete', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]

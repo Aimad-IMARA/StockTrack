@@ -10,6 +10,7 @@ use App\Repository\ModelRepository;
 use App\Repository\ProductRepository;
 use App\Service\GetDataService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -29,12 +30,16 @@ class ProductController extends AbstractController
     }
 
     #[Route('user/product', name: 'user.product.index')]
-    public function index(ProductRepository $productRepository): Response
+    public function index(ProductRepository $productRepository, Request $request,PaginatorInterface $paginator): Response
     {
-        $products = $productRepository->findAll();
-
+        $products = $paginator->paginate(
+            $productRepository->findAll(),
+            $request->query->getInt('page', 1),
+            8
+        );
         return $this->render('product/index.html.twig', [
             'products' => $products,
+            'featuredProducts' => $productRepository->findFeatured(),
         ]);
     }
     #[Route('user/product/{id}', name: 'user.product.show', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]

@@ -31,7 +31,7 @@ class Category
     #[Assert\length(min: 5)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy:"category", cascade: ['persist', 'remove'])]
     private Collection $products;
     public function getId(): ?int
     {
